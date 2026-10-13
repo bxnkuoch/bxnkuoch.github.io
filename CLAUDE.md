@@ -39,3 +39,9 @@ Headless Chrome screenshots (`--window-size=1280,3000 --virtual-time-budget=6000
 ## Publishing
 
 Pushing to `main` deploys the site. Don't commit or push unless Benjamin asks.
+
+GitHub Pages lets browsers cache files for 10 minutes, so `index.html` loads `styles.css`, `config.js` and `script.js` with a `?v=` version. Bump it before every commit that changes any of those files:
+
+```sh
+V=$(date +%Y%m%d%H%M) && sed -i '' -E "s#(styles\.css|config\.js|script\.js)\?v=[0-9]+#\1?v=$V#g" index.html
+```
