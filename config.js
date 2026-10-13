@@ -87,14 +87,16 @@ window.PORTFOLIO_CONFIG = {
       tags: ["Python", "OpenAI", "PRAW"],
     },
     {
-      title: "CodeFest",
+      title: "AdapTeam",
       repo: "kxllydo/codefest24-25",
       type: "team",
       event: "CodeFest",
       date: "Jun 2024",
-      description: "Full-stack hackathon app backed by an AWS SageMaker model.",
-      role: "Wrote the scripts that send input data to SageMaker and retrieve predictions",
-      tags: ["Python", "AWS SageMaker", "JavaScript"],
+      description:
+        "Matches prospective adoptive parents with children awaiting adoption. A neural-network classifier scores " +
+        "parent and child profiles (age, location, siblings, disability and more) to suggest compatible matches.",
+      role: "Wrote the scripts that send input data to AWS SageMaker and retrieve predictions",
+      tags: ["Python", "Flask", "scikit-learn", "AWS SageMaker"],
     },
     {
       title: "Schwab Account Dashboard",
