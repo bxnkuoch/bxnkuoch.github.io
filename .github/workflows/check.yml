@@ -1,0 +1,18 @@
+# Catches syntax errors that would leave the live site blank.
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: for f in *.js; do node --check "$f"; done

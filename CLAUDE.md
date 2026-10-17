@@ -23,8 +23,10 @@ Personal portfolio for Benjamin Kuoch (GitHub: `bxnkuoch`), served by GitHub Pag
 
 ```sh
 python3 -m http.server 8000   # then open http://localhost:8000
-node --check script.js && node --check config.js
+for f in *.js; do node --check "$f"; done
 ```
+
+The same syntax check runs in GitHub Actions (`.github/workflows/check.yml`) on every PR and push to `main`.
 
 Headless Chrome screenshots (`--window-size=1280,3000 --virtual-time-budget=6000`) work for visual checks. Headless Chrome won't go narrower than about 500px, so check mobile by loading the page in a 375px-wide iframe.
 
