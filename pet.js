@@ -43,7 +43,7 @@
   const canvas = document.createElement("canvas");
   canvas.setAttribute("aria-hidden", "true");
   canvas.style.cssText = `position:fixed;left:0;top:0;width:${PX}px;height:${PY}px;` +
-    "z-index:5;cursor:pointer;image-rendering:pixelated;";
+    "z-index:5;cursor:pointer;image-rendering:pixelated;transform-origin:50% 100%;";
   const dpr = devicePixelRatio || 1;
   canvas.width = PX * dpr;
   canvas.height = PY * dpr;
@@ -59,19 +59,22 @@
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
   // The cat stands on a perch (an element, or null for the bottom of the screen) at rx pixels from its left edge.
-  let perch = null, rx = innerWidth - 80, facing = -1, x = 0, y = 0, action, bubbleTimer, drawn;
+  // x, y and edges are in page coordinates, so a cat on a card scrolls with it instead of chasing it.
+  let perch = null, rx = innerWidth - 80, facing = -1, x = 0, y = 0, action, bubbleTimer, drawn, scrolledAt = 0;
+  addEventListener("scroll", () => (scrolledAt = performance.now()), { passive: true });
   function edge(el) {
-    if (!el) return { left: 0, right: innerWidth, top: innerHeight - 4 };
+    if (!el) return { left: scrollX, right: scrollX + document.documentElement.clientWidth, top: scrollY + innerHeight - 4 };
     const r = el.getBoundingClientRect();
-    return { left: r.left, right: r.right, top: r.top };
+    return { left: r.left + scrollX, right: r.right + scrollX, top: r.top + scrollY };
   }
   function onScreen(el) {
     const r = el.getBoundingClientRect();
-    return r.width > 40 && r.top > 70 && r.top < innerHeight - 30;
+    return r.width > 40 && r.top > 70 && r.top < innerHeight - 30 && !el.closest(".reveal:not(.in)");
   }
 
-  // Each action has a duration (dur) or a destination (tx), and a look(a) returning [sprite, overlay, lift].
+  // Each action has a duration (dur) or a destination (tx), and a look(a) returning [sprite, overlay, lift, squash].
   // A negative lift sinks the cat below its perch, where it is clipped so it looks hidden behind it.
+  // squash below 1 flattens the cat from its feet (crouching before a leap, landing after one).
   const sit = (dur) => ({ dur, look: (a) => [a.t % 2400 < 300 ? "sitTail" : "sit"] });
   const walkTo = (speed, frameMs) => {
     const e = edge(perch);
@@ -107,12 +110,19 @@
       then: () => (onScreen(target) ? leap(target) : sit(1500)),
     };
   }
+  // Crouch, then fly for longer the farther the landing spot is, then absorb the landing.
+  const CROUCH = 140;
   function leap(to) {
     const e = edge(to);
     const toRx = clamp(x - e.left + rand(-60, 60), 16, Math.max(16, e.right - e.left - 16));
     facing = Math.sign(e.left + toRx - x) || facing;
-    return { dur: 650, leap: { fx: x, fy: y, to, toRx }, look: () => ["walk1"] };
+    const dist = Math.hypot(e.left + toRx - x, e.top - y);
+    return {
+      dur: CROUCH + clamp(250 + dist * 0.7, 400, 900), leap: { fx: x, fy: y, to, toRx }, then: land,
+      look: (a) => (a.t < CROUCH ? ["sit", null, 0, 0.85] : ["walk1"]),
+    };
   }
+  const land = () => ({ dur: 200, look: (a) => ["sit", null, 0, 0.8 + (0.2 * a.t) / 200] });
   const BEHAVIORS = [
     [3, () => walkTo(60, 200)],
     [1, () => walkTo(240, 80)], // zoomies
@@ -182,12 +192,17 @@
     let done = action.t >= action.dur;
     if (action.leap) {
       // Aim at the landing spot's live position so scrolling mid-air still lands on it.
-      const { fx, fy, to, toRx } = action.leap, e = edge(to), p = Math.min(action.t / action.dur, 1);
+      // The arc is a parabola that rises a little above the higher of the two ends.
+      const { fx, fy, to, toRx } = action.leap, e = edge(to);
+      const p = clamp((action.t - CROUCH) / (action.dur - CROUCH), 0, 1);
+      const peak = Math.min(fy, e.top) - 60 - Math.abs(e.top - fy) * 0.3;
       x = fx + (e.left + toRx - fx) * p;
-      y = fy + (e.top - fy) * p - Math.sin(Math.PI * p) * 40;
+      y = (1 - p) ** 2 * fy + 2 * p * (1 - p) * peak + p ** 2 * e.top;
       if (done) { perch = to; rx = toRx; }
     } else {
-      if (perch && !onScreen(perch)) { start(leap(null)); return requestAnimationFrame(tick); }
+      // Ride the card off screen while the page scrolls; come back down once scrolling stops.
+      const gone = perch && (!perch.getBoundingClientRect().width || (!onScreen(perch) && now - scrolledAt > 800));
+      if (gone) { start(leap(null)); return requestAnimationFrame(tick); }
       if (action.tx !== undefined) {
         const step = (action.speed * dt) / 1000, dist = action.tx - rx;
         rx += Math.sign(dist) * Math.min(step, Math.abs(dist));
@@ -200,10 +215,14 @@
       x = e.left + rx;
       y = e.top;
     }
-    const [sprite, overlay, lift = 0] = action.look(action);
-    canvas.style.transform = `translate(${Math.round(x - PX / 2)}px, ${Math.round(y - PY - lift)}px)`;
+    const [sprite, overlay, lift = 0, squash = 1] = action.look(action);
+    // On the floor the cat is pinned to the window; on a card it lives in the page so the browser scrolls it with the card.
+    const pinned = !perch && !action.leap, sx = pinned ? scrollX : 0, sy = pinned ? scrollY : 0;
+    canvas.style.position = bubble.style.position = pinned ? "fixed" : "absolute";
+    canvas.style.transform = `translate(${Math.round(x - sx - PX / 2)}px, ${Math.round(y - sy - PY - lift)}px)` +
+      (squash < 1 ? ` scale(${2 - squash}, ${squash})` : "");
     canvas.style.clipPath = lift < 0 ? `inset(0 0 ${Math.round(-lift)}px 0)` : "";
-    bubble.style.transform = `translate(calc(${Math.round(x)}px - 50%), calc(${Math.round(y - PY - lift)}px - 100%))`;
+    bubble.style.transform = `translate(calc(${Math.round(x - sx)}px - 50%), calc(${Math.round(y - sy - PY - lift)}px - 100%))`;
     draw(sprite, overlay, facing < 0);
     if (done) start(action.then ? action.then() : randomBehavior());
     requestAnimationFrame(tick);
