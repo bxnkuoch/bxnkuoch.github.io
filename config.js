@@ -4,7 +4,7 @@ window.PORTFOLIO_CONFIG = {
 
   name: "Benjamin Kuoch",
   role: "CS @ Drexel University",
-  headline: "I build AI-powered tools and ship them fast, usually with a team and a deadline.",
+  headline: "I build AI-powered tools, from research ideas to working products.",
   about:
     "Computer Science student at Drexel University focused on machine learning. " +
     "I like hackathons, multi-agent systems, and turning messy real-world data into something useful.",
