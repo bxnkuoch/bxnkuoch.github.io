@@ -15,6 +15,7 @@ Personal portfolio for Benjamin Kuoch (GitHub: `bxnkuoch`), served by GitHub Pag
 - Only list projects that are on GitHub. Ignore local-only folders in `~/Documents/2026_Projects`.
 - Collaborations (repos owned by others) are listed only if Benjamin has commits there. Check with
   `gh api "repos/OWNER/REPO/commits?author=bxnkuoch"`.
+  Exception: `ReubenKimClemens/27SrProj_FoodatHome` (Benjamin's senior design project) is listed at his request before he has commits. Update its description once the app's purpose is known.
 - Base descriptions, "My role" lines and highlights on the repo README and Benjamin's commit messages. Never invent results, metrics or roles. Flag anything written without a source so Benjamin can check it.
 - Removed at Benjamin's request: SASE-Drexel `Posting-Schedule-Maker` and `mentorship-2024`. Don't re-add them.
 - `exclude` in the config hides duplicates: Benjamin's own `codefest24-25` and `sasehacks-2024` fork, since the team repos are listed instead.

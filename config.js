@@ -10,7 +10,7 @@ window.PORTFOLIO_CONFIG = {
     "I like hackathons, multi-agent systems, and turning messy real-world data into something useful.",
 
   // Short status pill above the headline. Set to "" to hide.
-  currently: "Building an adaptive AI music system",
+  currently: "Building Signal or Noise, an LLM-scored financial news digest",
 
   links: {
     github: "https://github.com/bxnkuoch",
@@ -29,6 +29,22 @@ window.PORTFOLIO_CONFIG = {
   //   demo:       live URL (optional)
   //   image:      e.g. "assets/ruconnect.png" (optional)
   projects: [
+    {
+      title: "Signal or Noise",
+      repo: "bxnkuoch/signal-or-noise",
+      type: "solo",
+      date: "Oct 2026",
+      featured: true,
+      description:
+        "Collapses a day of financial headlines into ~30 ranked stories, each with an LLM materiality score " +
+        "and a one-line summary, then measures whether those scores actually predict price moves.",
+      highlights: [
+        ".NET worker polls Yahoo Finance and CNBC RSS for 50 tickers, dedupes headlines and clusters them into stories",
+        "Claude scores each story against a strict JSON schema, using only headlines from its first 30 minutes so there's no lookahead",
+        "Python eval compares scores with volatility-normalized abnormal returns against headline-count and earnings-keyword baselines",
+      ],
+      tags: ["C#", ".NET", "SQL Server", "Claude API", "React", "Python"],
+    },
     {
       title: "Adaptive AI Music",
       repo: "bxnkuoch/music_gen",
@@ -64,6 +80,15 @@ window.PORTFOLIO_CONFIG = {
         "Hardened the pipeline for flaky venue Wi-Fi with caching and synthetic test flyers",
       ],
       tags: ["TypeScript", "Multi-agent", "LLMs", "Mapbox"],
+    },
+    {
+      title: "Food at Home",
+      repo: "ReubenKimClemens/27SrProj_FoodatHome",
+      type: "team",
+      event: "Senior Design",
+      date: "Upcoming",
+      description: "My senior design project: a mobile app built with React Native, Expo and Supabase. Just getting started.",
+      tags: ["TypeScript", "React Native", "Expo", "Supabase"],
     },
     {
       title: "Pic-A-Recipe",
@@ -110,10 +135,10 @@ window.PORTFOLIO_CONFIG = {
 
   // Grouped skill chips for the Skills section.
   skills: {
-    Languages: ["Python", "TypeScript", "JavaScript", "C", "HTML/CSS"],
-    "AI / ML": ["PyTorch", "scikit-learn", "Multi-agent LLM systems", "OpenAI API", "Gemini", "AWS SageMaker", "CLAP embeddings"],
+    Languages: ["Python", "TypeScript", "C#", "JavaScript", "C", "HTML/CSS"],
+    "AI / ML": ["PyTorch", "scikit-learn", "Multi-agent LLM systems", "Claude API", "OpenAI API", "Gemini", "AWS SageMaker", "CLAP embeddings"],
     "Web & Mobile": ["Next.js", "React Native", "Expo", "FastAPI", "Mapbox"],
-    "Data & Tools": ["PostgreSQL + pgvector", "Docker", "Git"],
+    "Data & Tools": [".NET", "SQL Server", "PostgreSQL + pgvector", "Docker", "Git"],
   },
 
   // Any other public repo of yours not listed above appears under "Archive",
