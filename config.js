@@ -27,8 +27,29 @@ window.PORTFOLIO_CONFIG = {
   //   role:       what YOU did — most important line for collaborations
   //   highlights: short bullets (featured cards only)
   //   demo:       live URL (optional)
+  //   devpost:    Devpost URL (optional)
   //   image:      e.g. "assets/ruconnect.png" (optional)
   projects: [
+    {
+      title: "Rounds",
+      repo: "bxnkuoch/Rounds",
+      type: "team",
+      event: "HackPrinceton 2026",
+      date: "Nov 2026",
+      featured: true,
+      devpost: "https://devpost.com/software/rounds-urb6qd",
+      description:
+        "Plans and replans the shift for hospital staff who cover the whole building, like transporters and " +
+        "respiratory therapists. It builds a navigation graph from a Matterport digital twin, orders the work " +
+        "with an optimizer, and lets an AI agent coordinate. A human approves every schedule change.",
+      role: "Built the optimizer, backend services and API, spatial layer and frontend, then finished the agent work for the demo",
+      highlights: [
+        "OR-Tools shift planner on Matterport-derived distances, compared against a due-order baseline on the same graph",
+        "Deep Agent coordinator hands scheduling to a subagent and pauses on an approval card showing the optimizer's plan diff",
+        "React + Vite app with floor plan, plan view, dispatch inbox, streaming agent chat and a 3D tour",
+      ],
+      tags: ["Python", "FastAPI", "OR-Tools", "LangGraph", "Claude API", "React", "Matterport"],
+    },
     {
       title: "Signal or Noise",
       repo: "bxnkuoch/signal-or-noise",

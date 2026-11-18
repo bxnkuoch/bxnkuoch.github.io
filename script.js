@@ -67,6 +67,7 @@
     const links = [
       p.demo && ext(p.demo, "Live site ↗"),
       p.repo && ext(`https://github.com/${p.repo}`, "Code ↗"),
+      p.devpost && ext(p.devpost, "Devpost ↗"),
     ].filter(Boolean).join("");
     const main = `
       ${p.featured ? `<div class="featured-label">Featured project</div>` : ""}
